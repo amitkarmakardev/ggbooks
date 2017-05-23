@@ -17,9 +17,9 @@ $DEBUG = true;
 
 //Set up mySQL username & password
 $mysql_user = 'root';
-$mysql_pw = 'DdumYRQSHU';
+$mysql_pw = 'secret';
 $mysql_host = 'localhost';
-$mysql_db = 'CSV_DB';
+$mysql_db = 'oclc';
 //
 
 //foreach ($argv as $value) {
@@ -32,44 +32,46 @@ $mysql_db = 'CSV_DB';
 
 $resultar = array();
 
+$isbnarray = array("143571590X");
 $isbnarray = array("0199394466");
 //$isbnarray = array("143571590X", "1449365833", "1491904992", "0596006306");
 
 foreach ($isbnarray as $sfbisbn) {
 
     $book_data = [];
-    $htmlContent = getbiblioinfo(searchISBN($sfbisbn));
-    file_put_contents('test.html', $htmlContent);
+
+    $pageContent = searchISBN($sfbisbn);
 
     $dom = new simple_html_dom();
-    $dom->load($htmlContent);
+    $dom->load($pageContent);
 
-    foreach ($dom->find("tr[class='metadata_row']") as $element) {
+    foreach ($dom->find("#metadata_content_table tr[class='metadata_row']") as $element) {
 
         $label = trim($element->children(0)->plaintext);
         $value = processString($element->children(1)->plaintext);
 
         switch (strtoupper($label)) {
             case "TITLE":
-                $book_data['Author'] = processString($value);
+                $book_data['title'] = processString($value);
                 break;
             case "AUTHOR":
-                $book_data['Author'] = $value;
+                $book_data['author'] = $value;
                 break;
             case "EDITION":
-                $book_data['Edition'] = $value;
+                $book_data['edition'] = $value;
                 break;
             case "PUBLISHER":
-                $book_data['publisher'] = $value;
+                $book_data['publisher'] = processString(explode(",", $value)[0]);
+                $book_data["publish_year"] = processString(explode(",", $value)[1]);
                 break;
             case "ISBN":
                 $isbn10 = trim(explode(",", $value)[0]);
                 $isbn13 = trim(explode(",", $value)[1]);
-                $isbn_array = ['isbn10' => $isbn10, 'isbn13' => $isbn13];
-                $book_data['isbn'] = $isbn_array;
+                $book_data['isbn10'] = $isbn10;
+                $book_data['isbn13'] = $isbn13;
                 break;
             case "LENGTH":
-                $book_data['length'] = $value;
+                $book_data['page_length'] = $value;
                 break;
             case "SUBJECTS":
                 $book_data['subjects'] = $value;
@@ -80,7 +82,12 @@ foreach ($isbnarray as $sfbisbn) {
 
     }
 
-    d($book_data);
+    $price = str_replace('Buy eBook - ', '', getaccessinfo($dom));
+    if (strtoupper($price) != "GET PRINT BOOK") {
+        $book_data['price'] = $price;
+    }
+
+    insertToDB($book_data);
 
     //9780007131945, 9786050913866, 978-1-891830-69-3,9780007322596
 
@@ -160,10 +167,9 @@ function getpreviewinfo($pagec)
     return $result;
 }
 
-function getaccessinfo($pagec)
+function getaccessinfo($dom)
 {
-    $result = get_string_between($pagec, '"gb-get-book-content">', '</a>');
-    return $result;
+    return processString($dom->find('#gb-get-book-content', 0)->plaintext);
 }
 
 /* courtesy from http://stackoverflow.com/questions/5696412/get-substring-between-two-strings-php accessed 12Feb17 1201hrs */
@@ -274,30 +280,33 @@ function scrape_book_page($page_content)
 }
 
 
-function executeSQL($dbQuery1)
+function insertToDB($book_details)
 {
     global $mysql_host, $mysql_user, $mysql_pw, $mysql_db;
-    $mysqli = new mysqli($mysql_host, $mysql_user, $mysql_pw, $mysql_db);
 
-    //$mysqli = new mysqli('localhost','root','root','OCLC', '3306', '/Applications/MAMP/tmp/mysql/mysql.sock');
-    //Output any connection error
-    if ($mysqli->connect_error) {
-        die('Error : (' . $mysqli->connect_errno . ') ' . $mysqli->connect_error);
+    try {
+        $conn = new PDO("mysql:host=$mysql_host;dbname=$mysql_db", $mysql_user, $mysql_pw);
+        // set the PDO error mode to exception
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $name_part = '';
+        $value_part = '';
+
+        foreach ($book_details as $key => $value) {
+            $name_part = $name_part . $key . ",";
+            $value_part = $value_part . "'" . $value . "',";
+        }
+
+        $name_part = trim($name_part, ",");
+        $value_part = trim($value_part, ",");
+
+        $sql = "INSERT INTO book_details (" . $name_part . ") VALUES (" . $value_part . ")";
+
+        $conn->exec($sql);
+        echo "New record created successfully";
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
     }
 
-    //MySqli Insert Query
-    //$mysqli->query( 'SET @@global.max_allowed_packet = ' . strlen( $dbQuery1 ) + 1024 );
-    d($dbQuery1);
-    $result = $mysqli->query($dbQuery1);
-    print $mysqli->error;
-
-    d($result);
-    if (!$result) {
-        printf("%s\n", $mysqli->error);
-    }
-    echo(DEBUG ? "<><><><><>" . strlen($dbQuery1) : "");
-    return $result;
+    $conn = null;
 }
-
-
-?>
