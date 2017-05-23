@@ -4,11 +4,12 @@ set_time_limit(0);
 ini_set('memory_limit', '10024M');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+//mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 require 'kint-master/Kint.class.php';
 require 'generateISBN.php';
 require 'XMLParser.php';
+require 'simple_html_dom.php';
 
 //Open a new connection to the MySQL server
 // Set debugging to true/false
@@ -31,22 +32,65 @@ $mysql_db = 'CSV_DB';
 
 $resultar = array();
 
-$isbnarray = array("143571590X", "1449365833", "1491904992", "0596006306");
+$isbnarray = array("0199394466");
+//$isbnarray = array("143571590X", "1449365833", "1491904992", "0596006306");
 
 foreach ($isbnarray as $sfbisbn) {
-    // Print Array
-    d($sfbisbn);
-    $htmlresult = getbiblioinfo(searchISBN($sfbisbn));
-    $htmlinarray = XMLParser::HTMLtoArrayViaJSON($htmlresult);
-    ddd($htmlinarray);
-    $result[$sfbisbn][] = $htmlresult;
-    $result[$sfbisbn][] = getpreviewinfo(searchISBN($sfbisbn));
-    $result[$sfbisbn][] = getaccessinfo(searchISBN($sfbisbn));
-    d($result);
-//9780007131945, 9786050913866, 978-1-891830-69-3,9780007322596
+
+    $book_data = [];
+    $htmlContent = getbiblioinfo(searchISBN($sfbisbn));
+    file_put_contents('test.html', $htmlContent);
+
+    $dom = new simple_html_dom();
+    $dom->load($htmlContent);
+
+    foreach ($dom->find("tr[class='metadata_row']") as $element) {
+
+        $label = trim($element->children(0)->plaintext);
+        $value = processString($element->children(1)->plaintext);
+
+        switch (strtoupper($label)) {
+            case "TITLE":
+                $book_data['Author'] = processString($value);
+                break;
+            case "AUTHOR":
+                $book_data['Author'] = $value;
+                break;
+            case "EDITION":
+                $book_data['Edition'] = $value;
+                break;
+            case "PUBLISHER":
+                $book_data['publisher'] = $value;
+                break;
+            case "ISBN":
+                $isbn10 = trim(explode(",", $value)[0]);
+                $isbn13 = trim(explode(",", $value)[1]);
+                $isbn_array = ['isbn10' => $isbn10, 'isbn13' => $isbn13];
+                $book_data['isbn'] = $isbn_array;
+                break;
+            case "LENGTH":
+                $book_data['length'] = $value;
+                break;
+            case "SUBJECTS":
+                $book_data['subjects'] = $value;
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    d($book_data);
+
+    //9780007131945, 9786050913866, 978-1-891830-69-3,9780007322596
 
 }
 
+
+function processString($data)
+{
+    return str_replace(array("\n", "\r"), '', html_entity_decode(strip_tags(trim($data))));
+}
 
 // Function that takes ISBN as parameter, returns Google Books Page content of the given book.
 function searchISBN($isbn_string)
