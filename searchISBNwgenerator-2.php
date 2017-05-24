@@ -37,6 +37,9 @@ foreach ($isbnarray as $sfbisbn) {
             case "AUTHOR":
                 $book_data['author'] = $value;
                 break;
+            case "AUTHORS":
+                $book_data['author'] = $value;
+                break;
             case "EDITION":
                 $book_data['edition'] = $value;
                 break;
