@@ -26,13 +26,13 @@ function insertToDB($book_details)
 
         $name_part = trim($name_part, ",");
         $value_part = trim($value_part, ",");
-
-        $sql = "INSERT INTO {$table_name} (" . $name_part . ") VALUES (" . $value_part . ")";
-
+        $sql = "INSERT INTO {$table_name} (" . $name_part . ") SELECT * FROM (SELECT {$value_part}) AS tmp WHERE NOT EXISTS ( SELECT isbn10 FROM {$table_name} WHERE isbn10 = '{$book_details['isbn10']}' ) LIMIT 1;";
+        // $sql = "INSERT INTO {$table_name} (" . $name_part . ") VALUES (" . $value_part . ") WHERE NOT EXISTS (Select isbn10 from {$table_name} where isbn10 = '{$book_details['isbn10']}')";
         $conn->exec($sql);
+
         echo "New record created successfully";
     } catch (PDOException $e) {
-        echo $sql . "<br>" . $e->getMessage();
+        echo $sql . PHP_EOL . $e->getMessage();
     }
 
     $conn = null;

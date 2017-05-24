@@ -5,13 +5,10 @@ require 'kint-master/Kint.class.php';
 require 'generateISBN.php';
 require 'XMLParser.php';
 require 'simple_html_dom.php';
+require 'database.php';
 
 $first = readline("Enter starting ISBN no: ");
 $last = readline("Enter end ISBN no: ");
-
-if (strlen($first) < 10 && strlen($last) < 10) {
-    die("Please provide 10 or 13 digit ISBN nos");
-}
 
 $isbnarray = makeISBNarray($first, $last);
 
@@ -44,8 +41,8 @@ foreach ($isbnarray as $sfbisbn) {
                 $book_data['edition'] = $value;
                 break;
             case "PUBLISHER":
-                $book_data['publisher'] = processString(explode(",", $value)[0]);
-                $book_data["publish_year"] = processString(explode(",", $value)[1]);
+                $book_data["publish_year"] = substr(processString($value), -4);
+                $book_data['publisher'] = trim(str_replace($book_data["publish_year"], "", processString($value)));
                 break;
             case "ISBN":
                 $isbn10 = trim(explode(",", $value)[0]);
@@ -71,9 +68,7 @@ foreach ($isbnarray as $sfbisbn) {
     }
 
     d($book_data);
-
-//    insertToDB($book_data);
-
+   insertToDB($book_data);
 }
 
 function checkPageExists($isbn_string)
@@ -89,7 +84,7 @@ function checkPageExists($isbn_string)
 
     /* Check for 404 (file not found). */
     $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
-    if ($httpCode == 200) {
+    if ($httpCode != 404) {
         $exists = true;
     }
     curl_close($handle);
