@@ -7,13 +7,12 @@ require 'XMLParser.php';
 require 'simple_html_dom.php';
 require 'database.php';
 
-$first = readline("Enter starting ISBN no: ");
-$last = readline("Enter end ISBN no: ");
+$first = $argv[1];
+$last = $argv[2];
 
 $isbnarray = makeISBNarray($first, $last);
 
 foreach ($isbnarray as $sfbisbn) {
-
     if (!checkPageExists($sfbisbn)) {
         d("{$sfbisbn} book does not exist");
         continue;
@@ -26,7 +25,6 @@ foreach ($isbnarray as $sfbisbn) {
     $dom->load($pageContent);
 
     foreach ($dom->find("#metadata_content_table tr[class='metadata_row']") as $element) {
-
         $label = trim($element->children(0)->plaintext);
         $value = processString($element->children(1)->plaintext);
 
@@ -48,8 +46,9 @@ foreach ($isbnarray as $sfbisbn) {
                 $book_data['publisher'] = trim(str_replace($book_data["publish_year"], "", processString($value)));
                 break;
             case "ISBN":
-                $isbn10 = trim(explode(",", $value[0]));
-                $isbn13 = trim(explode(",", $value[1]));
+                d($value);
+                $isbn10 = trim(explode(",", $value)[0]);
+                $isbn13 = trim(explode(",", $value)[1]);
                 $book_data['isbn10'] = $isbn10;
                 $book_data['isbn13'] = $isbn13;
                 break;
@@ -62,7 +61,6 @@ foreach ($isbnarray as $sfbisbn) {
             default:
                 break;
         }
-
     }
 
     $price = str_replace('Buy eBook - ', '', getaccessinfo($dom));
@@ -71,7 +69,7 @@ foreach ($isbnarray as $sfbisbn) {
     }
 
     d($book_data);
-   insertToDB($book_data);
+    insertToDB($book_data);
 }
 
 function checkPageExists($isbn_string)
@@ -80,7 +78,7 @@ function checkPageExists($isbn_string)
 
     $handle = curl_init(formURL($isbn_string));
 
-    curl_setopt($handle, CURLOPT_RETURNTRANSFER, TRUE);
+    curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
 
     /* Get the HTML or whatever is linked in $url. */
     curl_exec($handle);
@@ -93,7 +91,6 @@ function checkPageExists($isbn_string)
     curl_close($handle);
 
     return $exists;
-
 }
 
 
@@ -115,7 +112,6 @@ function searchISBN($isbn_string)
     // Page content of Google Books URL of the book
     $page_content = file_get_contents(formURL($isbn_string));
     return $page_content;
-
 }
 
 
