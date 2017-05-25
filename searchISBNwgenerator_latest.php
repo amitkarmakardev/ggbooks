@@ -19,7 +19,7 @@ foreach ($isbnarray as $sfbisbn) {
         continue;
     }
 
-    $book_data = [];
+    $book_data = array();
     $pageContent = searchISBN($sfbisbn);
 
     $dom = new simple_html_dom();
@@ -48,8 +48,8 @@ foreach ($isbnarray as $sfbisbn) {
                 $book_data['publisher'] = trim(str_replace($book_data["publish_year"], "", processString($value)));
                 break;
             case "ISBN":
-                $isbn10 = trim(explode(",", $value)[0]);
-                $isbn13 = trim(explode(",", $value)[1]);
+                $isbn10 = trim(explode(",", $value[0]));
+                $isbn13 = trim(explode(",", $value[1]));
                 $book_data['isbn10'] = $isbn10;
                 $book_data['isbn13'] = $isbn13;
                 break;
