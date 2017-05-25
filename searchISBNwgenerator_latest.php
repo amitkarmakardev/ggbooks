@@ -7,6 +7,7 @@ require 'XMLParser.php';
 require 'simple_html_dom.php';
 require 'database.php';
 
+
 $first = $argv[1];
 $last = $argv[2];
 
@@ -26,7 +27,7 @@ foreach ($isbnarray as $sfbisbn) {
 
     foreach ($dom->find("#metadata_content_table tr[class='metadata_row']") as $element) {
         $label = trim($element->children(0)->plaintext);
-        $value = processString($element->children(1)->plaintext);
+        $value = processString(utf8_encode($element->children(1)->plaintext));
 
         switch (strtoupper($label)) {
             case "TITLE":
@@ -43,10 +44,9 @@ foreach ($isbnarray as $sfbisbn) {
                 break;
             case "PUBLISHER":
                 $book_data["publish_year"] = substr(processString($value), -4);
-                $book_data['publisher'] = trim(str_replace($book_data["publish_year"], "", processString($value)));
+                $book_data['publisher'] = trim(trim(str_replace($book_data["publish_year"], "", processString($value))), ",");
                 break;
             case "ISBN":
-                d($value);
                 $isbn10 = trim(explode(",", $value)[0]);
                 $isbn13 = trim(explode(",", $value)[1]);
                 $book_data['isbn10'] = $isbn10;
@@ -67,7 +67,6 @@ foreach ($isbnarray as $sfbisbn) {
     if (strtoupper($price) != "GET PRINT BOOK") {
         $book_data['price'] = $price;
     }
-
     d($book_data);
     insertToDB($book_data);
 }
@@ -96,13 +95,21 @@ function checkPageExists($isbn_string)
 
 function processString($data)
 {
-    return str_replace(array("\n", "\r"), '', html_entity_decode(strip_tags(trim($data))));
+//    $data = mb_convert_encoding($data, 'HTML-ENTITIES', "UTF-8");
+//    $data = utf8_encode($data);
+    $data = preg_replace( "/\r|\n/", " ", $data);
+    $data = strip_tags(trim($data));
+    $data = html_entity_decode($data, ENT_QUOTES);
+    $data = html_entity_decode($data);
+    return $data;
+
 }
 
 function formURL($isbn_string)
 {
     // Google Books URL Of Book with given ISBN
-    $url = "https://books.google.com/books?vid=ISBN*isbn_is_here*&hl=en";
+//    $url = "https://books.google.com/books?vid=ISBN*isbn_is_here*&hl=en";
+    $url = "https://books.google.co.in/books?vid=ISBN*isbn_is_here*&hl=en&redir_esc=y";
     return str_replace("*isbn_is_here*", $isbn_string, $url);
 }
 
