@@ -2,6 +2,7 @@
 
 require 'libs/kint-master/Kint.class.php';
 require 'helpers/generateISBN.php';
+require 'helpers/benchmark.php';
 require 'libs/simple_html_dom.php';
 require 'helpers/database.php';
 
@@ -13,20 +14,30 @@ ini_set('display_errors', 1);
 $first = $argv[1];
 $last = $argv[2];
 
+
 $isbnarray = makeISBNarray($first, $last);
 
 foreach ($isbnarray as $sfbisbn) {
+
+    $benchmarks = [];
+
+    $start = startBenchMarking();
     if (!checkPageExists($sfbisbn)) {
         d("{$sfbisbn} book does not exist");
         continue;
     }
+    $benchmarks['Page exists or not'] = stopBenchmarking($start);
 
     $book_data = array();
+
+    $start = startBenchMarking();
     $pageContent = searchISBN($sfbisbn);
+    $benchmarks['Load page content'] = stopBenchmarking($start);
 
     $dom = new simple_html_dom();
     $dom->load($pageContent);
 
+    $start = startBenchMarking();
     foreach ($dom->find("#metadata_content_table tr[class='metadata_row']") as $element) {
         $label = trim($element->children(0)->plaintext);
         $value = processString(utf8_encode($element->children(1)->plaintext));
@@ -69,8 +80,14 @@ foreach ($isbnarray as $sfbisbn) {
     if (strtoupper($price) != "GET PRINT BOOK") {
         $book_data['price'] = $price;
     }
-    d($book_data);
+
+    $benchmarks['Scrape data'] = stopBenchmarking($start);
+
+    $start = startBenchMarking();
     insertToDB($book_data);
+    $benchmarks['Insert to database'] = stopBenchmarking($start);
+
+    d($benchmarks);
 }
 
 function checkPageExists($isbn_string)
@@ -84,7 +101,7 @@ function checkPageExists($isbn_string)
     /* Get the HTML or whatever is linked in $url. */
     curl_exec($handle);
 
-    /* Check for 404 (file not found). */
+    /* for 404 (file not found). */
     $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
     if ($httpCode != 404) {
         $exists = true;
