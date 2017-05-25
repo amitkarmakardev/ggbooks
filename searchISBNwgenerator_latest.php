@@ -1,12 +1,14 @@
 <?php
 
-require 'settings.php';
-require 'kint-master/Kint.class.php';
-require 'generateISBN.php';
-require 'XMLParser.php';
-require 'simple_html_dom.php';
-require 'database.php';
+require 'libs/kint-master/Kint.class.php';
+require 'helpers/generateISBN.php';
+require 'libs/simple_html_dom.php';
+require 'helpers/database.php';
 
+set_time_limit(0);
+ini_set('memory_limit', '1024M');
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 $first = $argv[1];
 $last = $argv[2];

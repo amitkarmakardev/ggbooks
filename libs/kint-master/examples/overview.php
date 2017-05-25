@@ -1,5 +1,5 @@
 <?php
-require( '../Kint.class.php' );
+require('../Kint.class.php');
 
 $selectedTheme = isset( $_GET['theme'] ) ? $_GET['theme'] : 'original';
 $allowedThemes = array();
