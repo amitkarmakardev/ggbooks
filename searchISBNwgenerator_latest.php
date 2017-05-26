@@ -9,7 +9,7 @@ require 'libs/kint-master/Kint.class.php';
 require 'helpers/generateISBN.php';
 require 'helpers/benchmark.php';
 require 'libs/simple_html_dom.php';
-require 'helpers/database.php';
+require 'helpers/database_functions.php';
 require "helpers/generateBookDetails.php";
 
 $start = $argv[1];

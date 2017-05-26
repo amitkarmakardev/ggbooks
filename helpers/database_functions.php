@@ -1,12 +1,6 @@
 <?php
 
-//Set up mySQL username & password
-$mysql_user = 'root';
-$mysql_pw = 'hJ7lRObbpk';
-$mysql_host = 'localhost';
-$mysql_db = 'ggbooks';
-$table_name = 'book_details';
-
+require "settings/database_credentials.php";
 
 function getConnection()
 {
@@ -34,6 +28,7 @@ function checkIfExists($isbn)
     if ($result->total > 0) {
         $exists = true;
     }
+    $conn = null;
     return $exists;
 }
 
