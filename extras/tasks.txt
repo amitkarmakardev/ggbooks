@@ -7,4 +7,4 @@
 5. Change the password to 'root' - done
 6. Change the database to 'ggbooks' - done
 7. Instead of interactive input of isbn numbers, provide start and end isbn no via command line arguments - done
-8. Do some benchmarking - not done
+8. Do some benchmarking - done

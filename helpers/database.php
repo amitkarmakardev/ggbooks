@@ -2,7 +2,7 @@
 
 //Set up mySQL username & password
 $mysql_user = 'root';
-$mysql_pw = 'secret';
+$mysql_pw = 'hJ7lRObbpk';
 $mysql_host = 'localhost';
 $mysql_db = 'ggbooks';
 $table_name = 'book_details';
