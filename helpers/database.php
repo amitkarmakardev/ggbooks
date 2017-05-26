@@ -23,6 +23,20 @@ function getConnection()
     return $conn;
 }
 
+function checkIfExists($isbn)
+{
+    global $mysql_host, $mysql_user, $mysql_pw, $mysql_db, $table_name;
+    $exists = false;
+    $conn = getConnection();
+    $sql = $conn->prepare("SELECT COUNT(*) AS `total` FROM {$table_name} WHERE isbn10 = :isbn10");
+    $sql->execute(array(':isbn10' => $isbn));
+    $result = $sql->fetchObject();
+    if ($result->total > 0) {
+        $exists = true;
+    }
+    return $exists;
+}
+
 function executeQuery($conn, $sql)
 {
     $result = false;

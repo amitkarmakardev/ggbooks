@@ -9,8 +9,6 @@ function makeISBNarray($start, $limit)
         $iarray[] = make10($interimISBN);
     }
     return $iarray;
-    echo "completed FINALLY!!";
-
 }
 
 function makeISBNquerystyle($start, $limit)
