@@ -13,6 +13,13 @@ function generateBookDetails($isbn_no)
         // echo("ISBN{$isbn_no}  - does not exist");
         $benchmarks['Page does not exist'] = stopBenchmarking($start);
         printBenchmark($isbn_no, $benchmarks);
+
+        $book_data = ['isbn10' => $isbn_no];
+
+        $start = startBenchMarking();
+        insertToDB($book_data);
+        $benchmarks['Insert to database'] = stopBenchmarking($start);
+        printBenchmark($isbn_no, $benchmarks);
         return;
     }
     $benchmarks['Page exists'] = stopBenchmarking($start);

@@ -9,11 +9,10 @@ function getConnection()
     try {
         $conn = new PDO("mysql:host=$mysql_host;dbname=$mysql_db;charset=utf8mb4", $mysql_user, $mysql_pw);
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        return $conn;
     } catch (PDOException $e) {
         echo $e->getMessage();
     }
-
-    return $conn;
 }
 
 function checkIfExists($isbn)
