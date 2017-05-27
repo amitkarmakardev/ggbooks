@@ -1,6 +1,6 @@
 <?php
 
-function genearteBookDetails($isbn_no)
+function generateBookDetails($isbn_no)
 {
     $benchmarks = [];
 
@@ -60,7 +60,7 @@ function genearteBookDetails($isbn_no)
                 break;
         }
     }
-    $price = str_replace('Buy eBook - ', '', getaccessinfo($dom));
+    $price = str_replace('Buy eBook - ', '', getPrice($dom));
     if (strtoupper($price) != "GET PRINT BOOK") {
         $book_data['price'] = $price;
     }
@@ -116,7 +116,7 @@ function searchISBN($isbn_string)
 }
 
 
-function getaccessinfo($dom)
+function getPrice($dom)
 {
     return processString($dom->find('#gb-get-book-content', 0)->plaintext);
 }

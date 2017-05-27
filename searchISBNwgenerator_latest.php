@@ -20,5 +20,5 @@ for ($x = $start; $x <= $limit; $x++) {
     //pads string to 9 chars long
     $interimISBN = str_pad($x, 9, '0', STR_PAD_LEFT);
     $isbn_no = make10($interimISBN);
-    genearteBookDetails($isbn_no);
+    generateBookDetails($isbn_no);
 }
