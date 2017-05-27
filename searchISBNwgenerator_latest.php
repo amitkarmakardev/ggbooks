@@ -14,18 +14,18 @@ require "helpers/generateBookDetails.php";
 
 $start = $argv[1];
 $limit = $argv[2];
-$outbound_ip = $argv[3];
 
-$fallback_primary_ip = '192.168.100.100';
+if (count($argv) < 4) {
+    $outbound_ip = '';
+} else {
+    $outbound_ip = $argv[3];
+}
 
-if($start == null || $start == '' || $limit == null || $limit == ''){
+if ($start == null || $start == '' || $limit == null || $limit == '') {
     echo "Please provide correct ISBN Numbers";
     die();
 }
 
-if($outbound_ip == null || $outbound_ip == ''){
-    $outbound_ip = $fallback_primary_ip;
-}
 
 for ($x = $start; $x <= $limit; $x++) {
     //pads string to 9 chars long
