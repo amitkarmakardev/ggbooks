@@ -12,7 +12,6 @@ function generateBookDetails($isbn_no)
     if (!checkPageExists($isbn_no)) {
         // echo("ISBN{$isbn_no}  - does not exist");
         $benchmarks['Page does not exist'] = stopBenchmarking($start);
-        printBenchmark($isbn_no, $benchmarks);
 
         $book_data = ['isbn10' => $isbn_no];
 
@@ -126,13 +125,4 @@ function searchISBN($isbn_string)
 function getPrice($dom)
 {
     return processString($dom->find('#gb-get-book-content', 0)->plaintext);
-}
-
-function printBenchmark($isbn, $benchmark)
-{
-
-    echo PHP_EOL. $isbn . PHP_EOL . "--------------" . PHP_EOL;
-    foreach ($benchmark as $key => $value) {
-        echo str_pad($key, 25) . "--> ". $value . PHP_EOL;
-    }
 }
