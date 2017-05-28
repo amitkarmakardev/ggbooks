@@ -8,3 +8,9 @@
 6. Change the database to 'ggbooks' - done
 7. Instead of interactive input of isbn numbers, provide start and end isbn no via command line arguments - done
 8. Do some benchmarking - done
+
+28-May-2017
+
+1. Integrate ggbooks with worldcat in such way that there are two functionality: 
+    i. If we provide --classify switch to the existing searchISBNwgenerator_lates.php, it will populate data both in book_detail and summary_classify
+    ii. If we provide the three options, ISBN1, ISBN2 and IP address, it will populate data both in book_details and summary_classify

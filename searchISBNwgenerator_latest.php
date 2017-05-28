@@ -6,30 +6,48 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 require 'libs/kint-master/Kint.class.php';
-require 'helpers/generateISBN.php';
-require 'helpers/benchmark.php';
 require 'libs/simple_html_dom.php';
+
+require 'helpers/benchmark.php';
 require 'helpers/database_functions.php';
-require "helpers/generateBookDetails.php";
+require 'helpers/gbooks_scraper.php';
+require 'helpers/url_functions.php';
+require 'helpers/isbn_generator.php';
+
+
+// Define global variable
+$benchmarks = [];
+$config = require "settings/config.php";
+
+$outbound_ip = $config['default_ip'];
+
+if (count($argv) < 2) {
+    echo "Too few argument";
+    die();
+}
 
 $start = $argv[1];
 $limit = $argv[2];
 
-if (count($argv) < 4) {
-    $outbound_ip = '';
-} else {
-    $outbound_ip = $argv[3];
-}
-
-if ($start == null || $start == '' || $limit == null || $limit == '') {
-    echo "Please provide correct ISBN Numbers";
+if (intval($start) > intval($limit)) {
+    echo "Start is greater than end!" . PHP_EOL;
     die();
 }
 
+if (count($argv) > 4) {
+    $outbound_ip = $argv[3];
+}
 
-for ($x = $start; $x <= $limit; $x++) {
-    //pads string to 9 chars long
-    $interimISBN = str_pad($x, 9, '0', STR_PAD_LEFT);
-    $isbn_no = make10($interimISBN);
-    generateBookDetails($isbn_no);
+for ($isbn_part = intval($start); $isbn_part <= intval($limit); $isbn_part++) {
+
+    $isbn10 = generateISBN10($isbn_part);
+
+    $exists = checkIfExists('book_details', 'isbn10', $isbn10);
+
+    if (!$exists) {
+        generateBookDetails($isbn10, $outbound_ip);
+    }
+    else{
+        echo "ISBN $isbn10 already exists in the databse".PHP_EOL;
+    }
 }

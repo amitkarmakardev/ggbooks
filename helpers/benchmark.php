@@ -11,9 +11,8 @@ function stopBenchmarking($start){
 
 function printBenchmark($isbn, $benchmark)
 {
-
     echo PHP_EOL. $isbn . PHP_EOL . "--------------" . PHP_EOL;
     foreach ($benchmark as $key => $value) {
-        echo str_pad($key, 25) . "--> ". $value .'seconds' . PHP_EOL;
+        echo str_pad($key, 25) . "--> ". round($value, 4) .' seconds' . PHP_EOL;
     }
 }
