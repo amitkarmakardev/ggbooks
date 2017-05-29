@@ -14,3 +14,5 @@
 1. Integrate ggbooks with worldcat in such way that there are two functionality: 
     i. If we provide --classify switch to the existing searchISBNwgenerator_lates.php, it will populate data both in book_detail and summary_classify
     ii. If we provide the three options, ISBN1, ISBN2 and IP address, it will populate data both in book_details and summary_classify
+    iii. Check if the record already exists in database, don't insert it
+    iv.
