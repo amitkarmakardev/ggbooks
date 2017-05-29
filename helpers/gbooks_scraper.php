@@ -1,19 +1,19 @@
 <?php
 
-function generateBookDetails($isbn_no, $outbound_ip)
+function generateBookDetails($isbn10)
 {
     $book_data = [];
 
     $start = startBenchMarking();
 
-    if (!checkPageExists(formURL($isbn_no))) {
+    if (!checkPageExists(formURL($isbn10))) {
         $benchmarks['Page does not exist'] = stopBenchmarking($start);
-        $book_data = ['isbn10' => $isbn_no];
+        $book_data = ['isbn10' => $isbn10];
     } else {
         $benchmarks['Page exists'] = stopBenchmarking($start);
 
         $start = startBenchMarking();
-        $pageContent = searchISBN($isbn_no, $outbound_ip);
+        $pageContent = searchISBN($isbn10);
         $benchmarks['Load page content'] = stopBenchmarking($start);
 
         $dom = new simple_html_dom();
@@ -68,7 +68,7 @@ function generateBookDetails($isbn_no, $outbound_ip)
     insertToDB('book_details', $book_data);
     $benchmarks['Insert to database'] = stopBenchmarking($start);
 
-    printBenchmark($isbn_no, $benchmarks);
+    printBenchmark($isbn10, $benchmarks);
 }
 
 
@@ -80,13 +80,10 @@ function formURL($isbn_string)
 }
 
 // Function that takes ISBN as parameter, returns Google Books Page content of the given book.
-function searchISBN($isbn_string, $outbound_ip)
+function searchISBN($isbn_string)
 {
-    // Bound outgoing ip
-    $context = stream_context_create(array('socket' => array('bindto' => $outbound_ip . ':0')));
-    // Page content of Google Books URL of the book
-    $page_content = file_get_contents(formURL($isbn_string), null, $context);
-    return $page_content;
+    $url = formURL($isbn_string);
+    return getHtmlContent($url);
 }
 
 

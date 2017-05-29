@@ -13,6 +13,7 @@ require 'helpers/database_functions.php';
 require 'helpers/gbooks_scraper.php';
 require 'helpers/url_functions.php';
 require 'helpers/isbn_generator.php';
+require 'helpers/oclc_scraper.php';
 
 
 // Define global variable
@@ -39,16 +40,19 @@ if (count($argv) > 4) {
 }
 
 
+
 for ($isbn_part = intval($start); $isbn_part <= intval($limit); $isbn_part++) {
 
     $isbn10 = generateISBN10($isbn_part);
 
-    $exists = checkIfExists('book_details', 'isbn10', $isbn10);
+    $exists = checkIfExistsInDB('book_details', 'isbn10', $isbn10);
 
     if (!$exists) {
-        generateBookDetails($isbn10, $outbound_ip);
+        generateBookDetails($isbn10);
+    } else {
+        echo "ISBN $isbn10 already exists in the databse" . PHP_EOL;
     }
-    else{
-        echo "ISBN $isbn10 already exists in the databse".PHP_EOL;
-    }
+
+    generateClassifyDetails($isbn10);
+
 }

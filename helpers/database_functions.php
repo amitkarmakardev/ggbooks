@@ -20,7 +20,7 @@ function getConnection()
     }
 }
 
-function checkIfExists($table, $column, $data)
+function checkIfExistsInDB($table, $column, $data)
 {
     $exists = false;
 

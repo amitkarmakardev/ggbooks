@@ -19,9 +19,20 @@ function checkPageExists($url)
 
 function processString($data)
 {
-    $data = preg_replace( "/\r|\n/", " ", $data);
+    $data = preg_replace("/\r|\n/", " ", $data);
     $data = strip_tags(trim($data));
     $data = html_entity_decode($data, ENT_QUOTES);
     $data = html_entity_decode($data);
     return $data;
+}
+
+
+function getHtmlContent($url)
+{
+    global $outbound_ip;
+    $context = stream_context_create(array('socket' => array('bindto' => $outbound_ip . ':0')));
+
+    // Page content of Google Books URL of the book
+    $page_content = file_get_contents($url, null, $context);
+    return $page_content;
 }
