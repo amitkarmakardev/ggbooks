@@ -18,33 +18,31 @@ function generateClassifyDetails($isbn10)
     $table = 'summary_classify';
     $summary_classify_data = [];
     $benchmarks = [];
+    $th_classify = [];
+    $td_classify = [];
 
     echo PHP_EOL . "Classify: $isbn10" . PHP_EOL;
     echo "-----------------------------------------".PHP_EOL;
 
     if (checkIfExistsInDB('summary_classify', 'isbn10', $isbn10)) {
         echo "Record already exists in summary_classify for ISBN $isbn10" . PHP_EOL;
-
         return;
     }
+
+    $summary_classify_data['isbn10'] = $isbn10;
 
     $url = 'http://classify.oclc.org/classify2/ClassifyDemo?search-standnum-txt=' . $isbn10 . '&startRec=0';
 
     $start = startBenchMarking();
-    if (checkPageExists($url) == false) {
-        $benchmarks['Page does not exist'] = stopBenchmarking($start);
-        $summary_classify_data['isbn10'] = $isbn10;
-        return;
-    }
-
     $htmlContent = getHtmlContent($url);
-    $benchmarks['Page exists'] = stopBenchmarking($start);
+    $benchmarks['Get html data'] = stopBenchmarking($start);
 
     $dom = new simple_html_dom();
     $dom = $dom->load($htmlContent);
-
     $start = startBenchMarking();
+
     $summary_exists_classify = $dom->getElementById('[id=itemsummary]');
+
     if ($summary_exists_classify != '') {
         $table_classify = $dom->getElementById('[class=itemSummary]');
 
@@ -71,10 +69,7 @@ function generateClassifyDetails($isbn10)
         }
         $benchmarks['Scrape data'] = stopBenchmarking($start);
 
-        $start = startBenchMarking();
         if (count($class_summary_td_classify) > 0) {
-
-            $summary_classify_data['isbn10'] = $isbn10;
             if (isset($th_classify[5])) {
                 $summary_classify_data['oclc'] = $td_classify[5];
 
@@ -109,23 +104,23 @@ function generateClassifyDetails($isbn10)
             if (isset($class_summary_td_classify[7])) {
                 $summary_classify_data['links_lcc '] = $class_summary_td_classify[7];
             }
-
-            insertToDB($table, $summary_classify_data);
         }
-        for ($k = 0; $k < count($th_classify); $k++) {
-            $result = executeQuery("SHOW COLUMNS FROM `summary_classify` LIKE '$th_classify[$k]'");
-
-            $column_name = str_replace(' ', '', trim($th_classify[$k]));
-
-            if ($result == false) {
-                executeQuery("ALTER TABLE summary_classify ADD COLUMN $column_name TEXT;");
-            }
-            executeQuery("UPDATE summary_classify set $column_name = '$td_classify[$k]'WHERE isbn10 = '$isbn10'");
-        }
-        $benchmarks['Insert to database'] = stopBenchmarking($start);
     }
 
+    $start = startBenchMarking();
+    insertToDB($table, $summary_classify_data);
+    for ($k = 0; $k < count($th_classify); $k++) {
+        $result = executeQuery("SHOW COLUMNS FROM `summary_classify` LIKE '$th_classify[$k]'");
+        $column_name = str_replace(' ', '', trim($th_classify[$k]));
+        if ($result == false) {
+            executeQuery("ALTER TABLE summary_classify ADD COLUMN $column_name TEXT;");
+        }
+        executeQuery("UPDATE summary_classify set $column_name = '$td_classify[$k]'WHERE isbn10 = '$isbn10'");
+    }
+    $benchmarks['Insert to database'] = stopBenchmarking($start);
+
     printBenchmark($benchmarks);
+
 }
 
 
