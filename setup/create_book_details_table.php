@@ -1,8 +1,8 @@
 <?php
 
 $config  = require "../settings/config.php";
-
 require "../helpers/database_functions.php";
+
 $sql = "CREATE TABLE `book_details` (
         `id` int NOT NULL AUTO_INCREMENT,
         `title` text DEFAULT NULL,

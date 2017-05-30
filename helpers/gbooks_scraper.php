@@ -4,6 +4,16 @@ function generateBookDetails($isbn10)
 {
     $book_data = [];
 
+    echo PHP_EOL . "Generate: $isbn10" . PHP_EOL;
+    echo "-----------------------------------------".PHP_EOL;
+
+    $exists = checkIfExistsInDB('book_details', 'isbn10', $isbn10);
+
+    if ($exists) {
+        echo "ISBN $isbn10 already exists in the databse" . PHP_EOL;
+        return;
+    }
+
     $start = startBenchMarking();
 
     if (!checkPageExists(formURL($isbn10))) {
@@ -68,7 +78,7 @@ function generateBookDetails($isbn10)
     insertToDB('book_details', $book_data);
     $benchmarks['Insert to database'] = stopBenchmarking($start);
 
-    printBenchmark($isbn10, $benchmarks);
+    printBenchmark($benchmarks);
 }
 
 

@@ -19,7 +19,6 @@ require 'helpers/oclc_scraper.php';
 // Define global variable
 $benchmarks = [];
 $config = require "settings/config.php";
-
 $outbound_ip = $config['default_ip'];
 
 if (count($argv) < 2) {
@@ -27,32 +26,36 @@ if (count($argv) < 2) {
     die();
 }
 
-$start = $argv[1];
-$limit = $argv[2];
+if (count($argv) == 2) {
+    $option = strtoupper(trim($argv[1]));
 
-if (intval($start) > intval($limit)) {
-    echo "Start is greater than end!" . PHP_EOL;
-    die();
+    switch ($option) {
+        case "--CLASSIFY":
+            generateClassifyDataFromDatabase();
+            break;
+        default:
+            echo "Invalid option $option";
+            break;
+    }
 }
 
-if (count($argv) > 4) {
-    $outbound_ip = $argv[3];
-}
+if (count($argv) > 2) {
 
+    $start = $argv[1];
+    $limit = $argv[2];
 
-
-for ($isbn_part = intval($start); $isbn_part <= intval($limit); $isbn_part++) {
-
-    $isbn10 = generateISBN10($isbn_part);
-
-    $exists = checkIfExistsInDB('book_details', 'isbn10', $isbn10);
-
-    if (!$exists) {
-        generateBookDetails($isbn10);
-    } else {
-        echo "ISBN $isbn10 already exists in the databse" . PHP_EOL;
+    if (intval($start) > intval($limit)) {
+        echo "Start is greater than end!" . PHP_EOL;
+        die();
     }
 
-    generateClassifyDetails($isbn10);
+    if (count($argv) > 4) {
+        $outbound_ip = $argv[3];
+    }
 
+    for ($isbn_part = intval($start); $isbn_part <= intval($limit); $isbn_part++) {
+        $isbn10 = generateISBN10($isbn_part);
+        generateBookDetails($isbn10);
+        generateClassifyDetails($isbn10);
+    }
 }

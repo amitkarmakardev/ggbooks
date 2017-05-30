@@ -66,13 +66,11 @@ function insertToDB($table, $data_array)
     }
 }
 
-function executeQuery($sql)
+function executeQuery($query)
 {
     $connection = getConnection();
-
     try {
-        $result = $connection->query($sql);
-        return $result;
+        return $connection->query($query);
     } catch (PDOException $exception) {
         echo $exception->getMessage() . PHP_EOL;
     }
