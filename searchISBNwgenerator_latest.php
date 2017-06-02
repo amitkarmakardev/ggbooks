@@ -12,7 +12,7 @@ require 'helpers/benchmark.php';
 require 'helpers/database_functions.php';
 require 'helpers/gbooks_scraper.php';
 require 'helpers/url_functions.php';
-require 'helpers/isbn_generator.php';
+require 'helpers/code_generator.php';
 require 'helpers/oclc_scraper.php';
 
 

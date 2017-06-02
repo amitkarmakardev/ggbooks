@@ -37,3 +37,36 @@ function generateISBN10($isbn_part)
 
     return $interimISBN . $check;
 }
+
+function generateISSN($issn_part)
+{
+    $interimISSN = str_pad($isbn_part, 7, '0', STR_PAD_LEFT);
+
+    if (is_string($interimISSN) === false) {
+        throw new Exception('Invalid parameter type.');
+    }
+
+    //Verify length
+    $issnLength = strlen($interimISSN);
+    if ($issnLength != 7) {
+        throw new Exception('Invalid ISSN-8 format.');
+    }
+
+    //Calculate check digit
+
+    $check = 0;
+
+    for ($i = 8; $i > 1; $i--) {
+        $check += intval($interimISSN[$i]) * intval($i);
+    }
+
+    $check = 11 - ($check % 11);
+
+    if ($check === 10) {
+        return $interimISSN . 'X';
+    } elseif ($check === 11) {
+        return $interimISSN . '0';
+    }
+
+    return $interimISSN . $check;
+}
