@@ -30,6 +30,7 @@ function processString($data)
 function getHtmlContent($url)
 {
     global $outbound_ip;
+    echo "Obtaining content through $outbound_ip".PHP_EOL;
     $context = stream_context_create(array('socket' => array('bindto' => $outbound_ip . ':0')));
 
     // Page content of Google Books URL of the book
