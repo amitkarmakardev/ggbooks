@@ -18,6 +18,4 @@ $sql = "CREATE TABLE summary_classify (
           PRIMARY KEY  (id)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci";
 
-if(executeQuery($sql)){
-    echo "Table summary_classify created successfully";
-}
+executeQuery($sql);
