@@ -19,9 +19,11 @@ function processArguments($argv)
 
 function validateISBNParts($start, $limit)
 {
-    if (strlen($start) == 9 && strlen($limit)) {
+    if (strlen($start) == 9 && strlen($limit) == 9) {
         if (intval($start) > intval($limit)) {
             die("Start must be smaller than lilmit".PHP_EOL);
         }
+    } else {
+        die("ISBN part should be 9 digits long".PHP_EOL);
     }
 }
