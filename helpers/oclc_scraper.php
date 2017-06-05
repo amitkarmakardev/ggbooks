@@ -110,9 +110,10 @@ function generateClassifyDetails($isbn10)
     $start = startBenchMarking();
     insertToDB($table, $summary_classify_data);
     for ($k = 0; $k < count($th_classify); $k++) {
-        $result = executeQuery("SHOW COLUMNS FROM `summary_classify` LIKE '$th_classify[$k]'");
         $column_name = str_replace(' ', '', trim($th_classify[$k]));
-        if ($result == false) {
+        $result = executeQuery("SHOW COLUMNS FROM `summary_classify` LIKE '$th_classify[$k]'");
+        $result_array = $result->fetchAll(PDO::FETCH_ASSOC);
+        if (count($result) == 0) {
             executeQuery("ALTER TABLE summary_classify ADD COLUMN $column_name TEXT;");
         }
         executeQuery("UPDATE summary_classify set $column_name = '$td_classify[$k]'WHERE isbn10 = '$isbn10'");
