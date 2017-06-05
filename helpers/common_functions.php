@@ -3,18 +3,20 @@
 function processArguments($argv)
 {
     global $config;
-
+    if(count($argv) < 2 || count($argv) == 3 || count($argv) > 5){
+        die("Wrong no of inputs" .PHP_EOL);        
+    }
     if (count($argv) == 2) {
         $config['option'] = $argv[1];
     }
     if (count($argv) > 3) {
+        $config['option'] = $argv[1];
         $config['start'] = $argv[2];
         $config['limit'] = $argv[3];
         if (count($argv) > 4) {
             $config['outbound_ip'] = $argv[4];
         }
     }
-    die("Wrong no of inputs" .PHP_EOL);
 }
 
 function validateISBNParts($start, $limit)
