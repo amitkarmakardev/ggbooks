@@ -1,4 +1,2 @@
 .idea
 tasks
-settings/*
-!settings/config.example.php

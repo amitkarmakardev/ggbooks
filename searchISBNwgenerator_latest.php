@@ -26,36 +26,42 @@ if (count($argv) < 2) {
     die();
 }
 
-if (count($argv) == 2) {
+if (count($argv) >= 2) {
     $option = strtoupper(trim($argv[1]));
 
     switch ($option) {
         case "--CLASSIFY":
             generateClassifyDataFromDatabase();
             break;
+        case "--GENERATE":
+            generateAll($argv);
+            break;
         default:
-            echo "Invalid option $option";
+            echo "Invalid option $option" . PHP_EOL;
             break;
     }
 }
 
-if (count($argv) > 2) {
+function generateAll($argv)
+{
+    global $outbound_ip;
+    if (count($argv) > 2) {
 
-    $start = $argv[1];
-    $limit = $argv[2];
+        $start = $argv[2];
+        $limit = $argv[3];
 
-    if (intval($start) > intval($limit)) {
-        echo "Start is greater than end!" . PHP_EOL;
-        die();
-    }
+        if (intval($start) > intval($limit)) {
+            die("Start is greater than end!" . PHP_EOL);
+        }
 
-    if (count($argv) > 4) {
-        $outbound_ip = $argv[3];
-    }
+        if (count($argv) > 4) {
+            $outbound_ip = $argv[4];
+        }
 
-    for ($isbn_part = intval($start); $isbn_part <= intval($limit); $isbn_part++) {
-        $isbn10 = generateISBN10($isbn_part);
-        generateBookDetails($isbn10);
-        generateClassifyDetails($isbn10);
+        for ($isbn_part = intval($start); $isbn_part <= intval($limit); $isbn_part++) {
+            $isbn10 = generateISBN10($isbn_part);
+            generateBookDetails($isbn10);
+            generateClassifyDetails($isbn10);
+        }
     }
 }
