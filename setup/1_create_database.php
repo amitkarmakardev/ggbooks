@@ -12,7 +12,7 @@ $mysql_db = $db_credentials['mysql_db'];
 $mysql_user = $db_credentials['mysql_user'];
 $mysql_pw = $db_credentials['mysql_pw'];
 
-$sql = "CREATE DATABASE ggbooks CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
+$sql = "CREATE DATABASE $mysql_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
 
 
 try {
