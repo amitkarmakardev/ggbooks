@@ -3,6 +3,7 @@
 function generateBookDetails($isbn10)
 {
     $book_data = [];
+    $benchmarks = [];
 
     echo PHP_EOL . "Generate: $isbn10" . PHP_EOL;
     echo "-----------------------------------------".PHP_EOL;

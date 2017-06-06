@@ -29,9 +29,9 @@ function processString($data)
 
 function getHtmlContent($url)
 {
-    global $outbound_ip;
-    echo "Obtaining content through $outbound_ip".PHP_EOL;
-    $context = stream_context_create(array('socket' => array('bindto' => $outbound_ip . ':0')));
+    global $config;
+    echo "Getting html contents through ".$config['default_ip'].PHP_EOL;
+    $context = stream_context_create(array('socket' => array('bindto' => $config['default_ip'] . ':0')));
 
     // Page content of Google Books URL of the book
     $page_content = file_get_contents($url, null, $context);
