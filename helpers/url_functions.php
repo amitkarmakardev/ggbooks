@@ -27,7 +27,7 @@ function processString($data)
 }
 
 
-function getHtmlContent($url)
+/*function getHtmlContent($url)
 {
     global $config;
     echo "Getting html contents through ".$config['default_ip'].PHP_EOL;
@@ -35,5 +35,17 @@ function getHtmlContent($url)
 
     // Page content of Google Books URL of the book
     $page_content = file_get_contents($url, null, $context);
+    return $page_content;
+}*/
+
+function getHtmlContent($url)
+{
+    global $config;
+    echo "Getting html contents through ".$config['default_ip'].PHP_EOL;
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curlh, CURLOPT_INTERFACE, $config['default_ip']);
+    $page_content = curl_exec($ch); 
     return $page_content;
 }
