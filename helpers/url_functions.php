@@ -45,7 +45,7 @@ function getHtmlContent($url)
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($curlh, CURLOPT_INTERFACE, $config['default_ip']);
+    curl_setopt($ch, CURLOPT_INTERFACE, $config['default_ip']);
     $page_content = curl_exec($ch); 
     return $page_content;
 }
