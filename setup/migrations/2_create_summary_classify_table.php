@@ -1,7 +1,4 @@
 <?php
-$config  = require "../settings/config.php";
-
-require "../helpers/database_functions.php";
 
 $sql = "CREATE TABLE summary_classify (
           id int(20) AUTO_INCREMENT,
@@ -17,5 +14,4 @@ $sql = "CREATE TABLE summary_classify (
           links_lcc text,
           PRIMARY KEY  (id)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci";
-
-executeQuery($sql);
+return $sql;

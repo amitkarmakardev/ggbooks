@@ -1,8 +1,5 @@
 <?php
 
-$config  = require "../settings/config.php";
-require "../helpers/database_functions.php";
-
 $sql = "CREATE TABLE `book_details` (
         `id` int NOT NULL AUTO_INCREMENT,
         `title` text DEFAULT NULL,
@@ -19,4 +16,4 @@ $sql = "CREATE TABLE `book_details` (
         PRIMARY KEY(ID)
       ) ENGINE=InnoDB CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci";
 
-$resultset = executeQuery($sql);
+return $sql;
