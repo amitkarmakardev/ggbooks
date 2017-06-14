@@ -31,9 +31,10 @@ function getHtmlContent($url)
 {
     global $config;
     echo "Getting html contents through ".$config['default_ip'].PHP_EOL;
-    $context = stream_context_create(array('socket' => array('bindto' => $config['default_ip'] . ':0')));
+    // $context = stream_context_create(array('socket' => array('bindto' => $config['default_ip'] . ':0')));
 
     // Page content of Google Books URL of the book
-    $page_content = file_get_contents($url, null, $context);
+    // $page_content = file_get_contents($url, null, $context);
+    $page_content = file_get_contents($url);
     return $page_content;
 }
