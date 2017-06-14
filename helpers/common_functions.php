@@ -3,8 +3,8 @@
 function processArguments($argv)
 {
     global $config;
-    if(count($argv) < 2 || count($argv) == 3 || count($argv) > 5){
-        die("Wrong no of inputs" .PHP_EOL);        
+    if (count($argv) < 2 || count($argv) == 3 || count($argv) > 5) {
+        die("Wrong no of inputs" . PHP_EOL);
     }
     if (count($argv) == 2) {
         $config['option'] = $argv[1];
@@ -18,13 +18,18 @@ function processArguments($argv)
         }
     }
 }
+
 function validateISBNParts($start, $limit)
 {
     if (strlen($start) == 9 && strlen($limit) == 9) {
         if (intval($start) > intval($limit)) {
-            die("Start must be smaller than lilmit".PHP_EOL);
+            die("Start must be smaller than limit" . PHP_EOL);
         }
     } else {
-        die("ISBN part should be 9 digits long".PHP_EOL);
+        die("ISBN part should be 9 digits long" . PHP_EOL);
     }
+}
+
+function pLog($statement){
+    echo $statement.PHP_EOL;
 }
