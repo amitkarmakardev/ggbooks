@@ -1,21 +1,23 @@
 <?php
 
-function processArguments($argv)
+function processArguments($options)
 {
     global $config;
-    if (count($argv) < 2 || count($argv) == 3 || count($argv) > 6) {
-        die("Wrong no of inputs" . PHP_EOL);
+
+    if(array_key_exists('o', $options)){
+        $config['option'] = $options['o'];
     }
-    if (count($argv) == 2) {
-        $config['option'] = $argv[1];
+    if(array_key_exists('s', $options)){
+        $config['start'] = $options['s'];
     }
-    if (count($argv) > 3) {
-        $config['option'] = $argv[1];
-        $config['start'] = $argv[2];
-        $config['limit'] = $argv[3];
-        if (count($argv) > 4) {
-            $config['db_credentials']['mysql_db'] = $argv[4];
-        }
+    if(array_key_exists('l', $options)){
+        $config['limit'] = $options['l'];
+    }
+    if(array_key_exists('i', $options)){
+        $config['default_ip'] = $options['i'];
+    }
+    if(array_key_exists('d', $options)){
+        $config['db_credentials']['mysql_db'] = $options['d'];
     }
 }
 
@@ -32,4 +34,8 @@ function validateISBNParts($start, $limit)
 
 function pLog($statement){
     echo $statement.PHP_EOL;
+}
+
+function pDie($statement){
+     die($statement.PHP_EOL);
 }

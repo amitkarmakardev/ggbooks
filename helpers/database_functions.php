@@ -49,7 +49,7 @@ function insertToDB($table, $data_array)
     $value_part = '';
 
     foreach ($data_array as $key => $value) {
-        $columns_part = $columns_part ."`". $key . "`,";
+        $columns_part = $columns_part . $key . ",";
         $value_part = $value_part . "?,";
     }
 
