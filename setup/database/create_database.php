@@ -2,7 +2,7 @@
 
 $db_credentials = $config['db_credentials'];
 
-$sql = "CREATE DATABASE {$db_credentials['mysql_db']} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
+$sql = "CREATE DATABASE `{$db_credentials['mysql_db']}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
 
 try {
     $conn = new PDO("mysql:host={$db_credentials['mysql_host']}", $db_credentials['mysql_user'], $db_credentials['mysql_pw']);
