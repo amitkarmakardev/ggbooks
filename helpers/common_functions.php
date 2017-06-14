@@ -14,10 +14,7 @@ function processArguments($argv)
         $config['start'] = $argv[2];
         $config['limit'] = $argv[3];
         if (count($argv) > 4) {
-            $config['default_ip'] = $argv[4];
-            if(count($argv) > 5){
-                $config['db_credentials']['mysql_db'] = $argv[5];
-            }
+            $config['db_credentials']['mysql_db'] = $argv[4];
         }
     }
 }
