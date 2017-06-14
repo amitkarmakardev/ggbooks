@@ -2,8 +2,8 @@
 
 global $config;
 
-require "settings/bootstrap.php";
-$config = require "settings/config.php";
+require __DIR__."/../settings/bootstrap.php";
+$config = require __DIR__."/../settings/config.php";
 
 
 if (count($argv) > 1) {

@@ -2,7 +2,7 @@
 
 global $config;
 
-require "settings/bootstrap.php";
+require __DIR__."/settings/bootstrap.php";
 
 $benchmarks = [];
 processArguments($argv);

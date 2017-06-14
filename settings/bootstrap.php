@@ -5,20 +5,20 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 
-require 'libs/kint-master/Kint.class.php';
-require 'libs/simple_html_dom.php';
-require 'libs/Isbn/Isbn.php';
-require 'libs/Isbn/Hyphens.php';
-require 'libs/Isbn/Check.php';
-require 'libs/Isbn/CheckDigit.php';
-require 'libs/Isbn/Translate.php';
-require 'libs/Isbn/Validation.php';
+require __DIR__ . '/../libs/kint-master/Kint.class.php';
+require __DIR__ . '/../libs/simple_html_dom.php';
+require __DIR__ . '/../libs/Isbn/Isbn.php';
+require __DIR__ . '/../libs/Isbn/Hyphens.php';
+require __DIR__ . '/../libs/Isbn/Check.php';
+require __DIR__ . '/../libs/Isbn/CheckDigit.php';
+require __DIR__ . '/../libs/Isbn/Translate.php';
+require __DIR__ . '/../libs/Isbn/Validation.php';
 
-require 'helpers/benchmark.php';
-require 'helpers/database_functions.php';
-require 'helpers/gbooks_scraper.php';
-require 'helpers/url_functions.php';
-require 'helpers/oclc_scraper.php';
-require 'helpers/common_functions.php';
+require __DIR__ . '/../helpers/benchmark.php';
+require __DIR__ . '/../helpers/database_functions.php';
+require __DIR__ . '/../helpers/gbooks_scraper.php';
+require __DIR__ . '/../helpers/url_functions.php';
+require __DIR__ . '/../helpers/oclc_scraper.php';
+require __DIR__ . '/../helpers/common_functions.php';
 
-$config = require "settings/config.php";
+$config = require __DIR__ . "/../settings/config.php";
