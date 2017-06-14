@@ -5,12 +5,16 @@ global $config;
 require __DIR__."/settings/bootstrap.php";
 
 $benchmarks = [];
-processArguments($argv);
+
+$options = getOpt("o:s:l:i:d:");
+
+processArguments($options);
+
 switch (strtoupper($config['option'])) {
-    case "-C":
+    case "CLASSIFY":
         generateClassifyDataFromDatabase();
         break;
-    case "-G":
+    case "GENERATE":
         generateAll();
         break;
     default:
