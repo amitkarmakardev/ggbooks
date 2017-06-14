@@ -6,6 +6,8 @@ function processArguments($options)
 
     if(array_key_exists('o', $options)){
         $config['option'] = $options['o'];
+    }else{
+        pDie("Please provide an option: generate / classify");
     }
     if(array_key_exists('s', $options)){
         $config['start'] = $options['s'];
