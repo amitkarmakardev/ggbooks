@@ -3,7 +3,7 @@
 function processArguments($argv)
 {
     global $config;
-    if (count($argv) < 2 || count($argv) == 3 || count($argv) > 5) {
+    if (count($argv) < 2 || count($argv) == 3 || count($argv) > 6) {
         die("Wrong no of inputs" . PHP_EOL);
     }
     if (count($argv) == 2) {
@@ -15,6 +15,9 @@ function processArguments($argv)
         $config['limit'] = $argv[3];
         if (count($argv) > 4) {
             $config['default_ip'] = $argv[4];
+            if(count($argv) > 5){
+                $config['db_credentials']['mysql_db'] = $argv[5];
+            }
         }
     }
 }
