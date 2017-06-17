@@ -31,7 +31,7 @@ function generateAll()
         $interimISBN = str_pad($isbn_part, 9, '0', STR_PAD_LEFT);
         $isbn10 = $interimISBN.$isbn->checkDigit->make10($interimISBN);
         $isbn13 = $isbn->translate->to13($isbn10);
-        generateBookDetails($isbn10);
-        generateClassifyDetails($isbn13);
+        generateBookDetails($isbn10, $isbn13);
+        generateClassifyDetails($isbn10, $isbn13);
     }
 }
