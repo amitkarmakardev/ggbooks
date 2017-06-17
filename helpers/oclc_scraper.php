@@ -2,21 +2,21 @@
 
 function generateClassifyDataFromDatabase(){
 
-    $query = "SELECT isbn10 from book_details where isbn10 NOT IN (SELECT isbn10 from summary_classify)";
+    $query = "SELECT isbn10, isbn13 from book_details where isbn10 NOT IN (SELECT isbn10 from summary_classify)";
     $result = executeQuery($query);
 
     $isbn_array = $result->fetchAll(PDO::FETCH_ASSOC);
 
     foreach($isbn_array as $key => $value){
-        generateClassifyDetails($value['isbn10']);
+        generateClassifyDetails($value['isbn10'], $value['isbn13']);
     }
 
 }
 
-function generateClassifyDetails($isbn10)
+function generateClassifyDetails($isbn10, $isbn13)
 {
     $table = 'summary_classify';
-    $summary_classify_data = [];
+    $summary_classify_data = ['isbn10' => $isbn10, 'isbn13' => $isbn13];
     $benchmarks = [];
     $th_classify = [];
     $td_classify = [];
@@ -29,9 +29,10 @@ function generateClassifyDetails($isbn10)
         return;
     }
 
-    $summary_classify_data['isbn10'] = $isbn10;
+    $url = 'http://classify.oclc.org/classify2/ClassifyDemo?search-standnum-txt=' . $isbn13 . '&startRec=0';
 
-    $url = 'http://classify.oclc.org/classify2/ClassifyDemo?search-standnum-txt=' . $isbn10 . '&startRec=0';
+    $http_response_code = getHTTPResponseCode($url);
+    $summary_classify_data['http_response_code'] = $http_response_code;
 
     $start = startBenchMarking();
     $htmlContent = getHtmlContent($url);
@@ -109,6 +110,7 @@ function generateClassifyDetails($isbn10)
 
     $start = startBenchMarking();
     insertToDB($table, $summary_classify_data);
+
     for ($k = 0; $k < count($th_classify); $k++) {
         $column_name = str_replace(' ', '', trim($th_classify[$k]));
         $result = executeQuery("SHOW COLUMNS FROM `summary_classify` LIKE '$column_name'");
@@ -119,7 +121,6 @@ function generateClassifyDetails($isbn10)
         executeQuery("UPDATE summary_classify set $column_name = '$td_classify[$k]'WHERE isbn10 = '$isbn10'");
     }
     $benchmarks['Insert to database'] = stopBenchmarking($start);
-
     printBenchmark($benchmarks);
 
 }

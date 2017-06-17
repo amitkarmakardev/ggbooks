@@ -1,6 +1,6 @@
 <?php
 
-function checkPageExists($url)
+function getHTTPResponseCode($url)
 {
     $exists = false;
     $handle = curl_init($url);
@@ -9,11 +9,8 @@ function checkPageExists($url)
     curl_exec($handle);
     /* for 404 (file not found). */
     $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
-    if ($httpCode != 404) {
-        $exists = true;
-    }
     curl_close($handle);
-    return $exists;
+    return $httpCode;
 }
 
 

@@ -1,8 +1,8 @@
 <?php
 
-function generateBookDetails($isbn10)
+function generateBookDetails($isbn10, $isbn13)
 {
-    $book_data = [];
+    $book_data = ['isbn10' => $isbn10, 'isbn13' => $isbn13];
     $benchmarks = [];
 
     echo PHP_EOL . "Generate: $isbn10" . PHP_EOL;
@@ -16,10 +16,11 @@ function generateBookDetails($isbn10)
     }
 
     $start = startBenchMarking();
+    $http_response_code = getHTTPResponseCode(formURL($isbn10));
+    $book_data['http_response_code'] = $http_response_code;
 
-    if (!checkPageExists(formURL($isbn10))) {
+    if ($http_response_code == '404') {
         $benchmarks['Page does not exist'] = stopBenchmarking($start);
-        $book_data = ['isbn10' => $isbn10];
     } else {
         $benchmarks['Page exists'] = stopBenchmarking($start);
 
@@ -53,10 +54,6 @@ function generateBookDetails($isbn10)
                     $book_data['publisher'] = trim(trim(str_replace($book_data["publish_year"], "", processString($value))), ",");
                     break;
                 case "ISBN":
-                    $isbn10 = trim(explode(",", $value)[0]);
-                    $isbn13 = trim(explode(",", $value)[1]);
-                    $book_data['isbn10'] = $isbn10;
-                    $book_data['isbn13'] = $isbn13;
                     break;
                 case "LENGTH":
                     $book_data['page_length'] = $value;
